@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productor
+  template:
+    metadata:
+      labels:
+        app: productor
+    spec:
+      containers:
+      - name: productor
+        image: python:3-alpine
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            pip install redis --quiet
+            python3 -u -c "
+            import redis
+            import json
+            import random
+            import time
+            from datetime import datetime
+            import os
+            
+            redis_password = os.environ.get('REDIS_PASSWORD')
+            print('Conectando a Redis...')
+            r = redis.Redis(host='redis-service', port=6379, password=redis_password, decode_responses=True)
+            print('Conectado. Iniciando generación de datos...')
+            
+            while True:
+                dato = {
+                    'sensor_id': 'rbt-01',
+                    'valor': random.randint(1, 100),
+                    'timestamp': datetime.now().isoformat()
+                }
+                r.rpush('sensor_data', json.dumps(dato))
+                print(f'Dato guardado: {dato}')
+                time.sleep(3)
+            "
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-secret
+              key: redis-password
