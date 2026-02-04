@@ -1,3 +1,5 @@
+Evalucion Sebastián Machado
+
 Sistema de Monitoreo en Tiempo Real - Kubernetes
 Archivos yaml:
 - secret.yaml: Define la contraseña de Redis para autenticación segura.
@@ -9,9 +11,9 @@ Archivos yaml:
     - Configura la contraseña desde el Secret
 - redis-service.yaml: Service interno ClusterIP para que otros pods se conecten a Redis.
 - productor-deployment.yaml
-    - Usa Python 3 Alpine (ligero)
+    - Usa Python 3 Alpine 
     - Instala el cliente redis-py
-    - Script inline que:
+    - Script que:
       - Se conecta a Redis con autenticación
         - Genera datos aleatorios cada 3 segundos
         - Formato JSON: `{"sensor_id": "rbt-01", "valor": X, "timestamp": "..."}`
